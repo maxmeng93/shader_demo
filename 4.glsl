@@ -1,3 +1,7 @@
+/**
+ * 笛卡尔坐标系下色彩映射
+ */
+
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -5,7 +9,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-vec3 rgb2hsb(vec3 c){
+vec3 rgb2hsb(in vec3 c){
   vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
   vec4 p = mix(
     vec4(c.bg, K.wz),
@@ -29,7 +33,7 @@ vec3 rgb2hsb(vec3 c){
 
 // Function from Iñigo Quiles
 // https://www.shadertoy.com/view/MsS3Wc
-vec3 hsb2rgb(vec3 c){
+vec3 hsb2rgb(in vec3 c){
   vec3 rgb = clamp(
     abs(
       mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0)
