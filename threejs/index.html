@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three.js Shader</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.152.2/build/three.module.js';
+
+    // Scene
+    const scene = new THREE.Scene();
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 2;
+    // camera.lookAt(new THREE.Vector3());
+
+    // Mesh = Geometry + Material
+    const geometry = new THREE.PlaneGeometry(1, 1);
+
+    const vertex = `
+  // 在ShaderMaterial中，下面三个属性已经自动声明了
+  // attribute vec3 position;
+  // attribute vec3 normal;
+  // attribute vec2 uv;
+  varying vec2 vUv;
+
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+    const fragment = `
+  varying vec2 vUv;
+
+  void main() {
+    float color = step(0.5, 1.0 - vUv.x);
+    gl_FragColor = vec4(vec3(color), 1.0);
+  }
+`;
+
+    // const material = new THREE.MeshBasicMaterial({ color: 0x0ca678 });
+    const material = new THREE.ShaderMaterial({
+      vertexShader: vertex,
+      fragmentShader: fragment
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor("#e6fcf5", 1);
+    document.body.appendChild(renderer.domElement);
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      // mesh.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+
+</html>
